@@ -21,23 +21,13 @@ polka()
     const {temperature} = request.body
     currentTemperature = temperature
 
-    if (temperature > 60) {
-        setFanSpeed(100)
-    }
-    else if (temperature > 50) {
-        setFanSpeed(75)
-    }
-    else if (temperature > 40) {
-        setFanSpeed(50)
-    }
-    else {
-        setFanSpeed(30)
-    }
-
+    // Use a sigmoid function to calculate fan speed
+    const fanSpeed = Math.round(100 / (1 + Math.exp(-0.1 * (temperature - 45))))
+    setFanSpeed(fanSpeed)
     response.end()
 })
 .get('/', (request, response) => {
-    response.end(`Current temperature: ${currentTemperature}°C`)
+    response.end(`Current temperature: ${currentTemperature}C`)
 })
 .listen(port, (error) => {
     console.log(`Listening on port ${port}`)
