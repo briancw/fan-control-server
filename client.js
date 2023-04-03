@@ -7,7 +7,7 @@ const getTemperature = () => {
 
         const options = {
             hostname: '10.0.0.36',
-            port: 80,
+            port: 3000,
             path: '/',
             method: 'POST',
             headers: {
