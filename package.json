@@ -1,12 +1,8 @@
 {
-  "name": "gpu-fan-control",
+  "name": "fan-control-server",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
+  "type": "module",
   "author": "Brian Whicheloe <brian@whicheloe.us> (https://whicheloe.us/)",
   "license": "MIT",
   "devDependencies": {
