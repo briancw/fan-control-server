@@ -7,12 +7,8 @@ let currentSpeed = 0
 let currentTemperature = 0
 
 const setFanSpeed = (speed) => {
-    const hexValue = `0x${speed.toString(16)}`
-    if (currentSpeed !== speed) {
-        exec(`ipmitool raw 0x3a 0x01 0x00 ${hexValue} 0x00 0x00 0x00 0x00 0x00 0x00`)
-        console.log('Setting fan speed to', speed)
-        currentSpeed = speed
-    }
+    const hexValue = `0x${speed.toString(16).padStart(2, '0')}`
+    exec(`ipmitool raw 0x3a 0x01 0x00 ${hexValue} 0x00 0x00 0x00 0x00 0x00 0x00`)
 }
 
 polka()
@@ -22,8 +18,18 @@ polka()
     currentTemperature = temperature
 
     // Use a sigmoid function to calculate fan speed
-    const fanSpeed = Math.round(100 / (1 + Math.exp(-0.1 * (temperature - 45))))
-    setFanSpeed(fanSpeed)
+    let fanSpeed = Math.round(100 / (1 + Math.exp(-0.1 * (temperature - 45))))
+
+    if (fanSpeed < 40) {
+        fanSpeed = 5
+    }
+
+    if (currentSpeed !== fanSpeed) {
+        setFanSpeed(fanSpeed)
+        console.log('Setting fan speed to', fanSpeed)
+        currentSpeed = fanSpeed
+    }
+
     response.end()
 })
 .get('/', (request, response) => {
