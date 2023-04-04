@@ -1,28 +1,27 @@
-import {exec} from 'node:child_process'
+import {execSync} from 'node:child_process'
 import http from 'node:http'
 
 const getTemperature = () => {
-    exec('nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader', (error, stdout, stderr) => {
-        const temporary = Number.parseInt(stdout.trim(), 10)
+    const temperature = execSync('nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader').toString().trim()
+    const usage = Number.parseInt(execSync('nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader').toString(), 10)
 
-        const options = {
-            hostname: '10.0.0.36',
-            port: 3000,
-            path: '/',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        }
+    const options = {
+        hostname: '10.0.0.36',
+        port: 3000,
+        path: '/',
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    }
 
-        const request = http.request(options)
-        request.on('error', (error) => {
-            console.error('Error connecting to host')
-        })
-        const data = JSON.stringify({temperature: temporary})
-        request.write(data)
-        request.end()
+    const request = http.request(options)
+    request.on('error', (error) => {
+        console.error('Error connecting to host')
     })
+    const data = JSON.stringify({temperature, usage})
+    request.write(data)
+    request.end()
 }
 
 setInterval(getTemperature, 1000)
